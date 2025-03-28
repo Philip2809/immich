@@ -497,10 +497,10 @@
     // };
     // contextMenuAsset = asset;
 
-    // if (event.shiftKey) {
-    //   contextMenuOpen = false;
-    //   return;
-    // }
+    if (contextMenuOpen) {
+      contextMenuOpen = false;
+      return;
+    }
 
     contextMenuAsset = asset;
     contextMenuOpen = true;
