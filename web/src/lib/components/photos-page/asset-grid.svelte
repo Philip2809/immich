@@ -14,7 +14,7 @@
   import { navigate } from '$lib/utils/navigation';
   import { type ScrubberListener } from '$lib/utils/timeline-util';
   import type { AlbumResponseDto, AssetResponseDto, PersonResponseDto } from '@immich/sdk';
-  import { onMount, type Snippet } from 'svelte';
+  import { onMount, tick, type Snippet } from 'svelte';
   import Portal from '../shared-components/portal/portal.svelte';
   import Scrubber from '../shared-components/scrubber/scrubber.svelte';
   import ShowShortcuts from '../shared-components/show-shortcuts.svelte';
@@ -26,6 +26,14 @@
   import type { UpdatePayload } from 'vite';
   import type { AssetInteraction } from '$lib/stores/asset-interaction.svelte';
   import { mobileDevice } from '$lib/stores/mobile-device.svelte';
+  import RightClickContextMenu, {
+    type AssetContextMenu,
+  } from '$lib/components/shared-components/context-menu/right-click-context-menu.svelte';
+  import MenuOption from '$lib/components/shared-components/context-menu/menu-option.svelte';
+  import DownloadAction from '$lib/components/asset-viewer/actions/download-action.svelte';
+  import ShareAction from '$lib/components/asset-viewer/actions/share-action.svelte';
+  import { mdiDeleteOutline } from '@mdi/js';
+  import { t } from 'svelte-i18n';
 
   interface Props {
     isSelectionMode?: boolean;
@@ -78,6 +86,10 @@
   let scrubBucketPercent = $state(0);
   let scrubBucket: { bucketDate: string | undefined } | undefined = $state();
   let scrubOverallPercent: number = $state(0);
+
+  let contextMenuOpen = $state(false);
+  let contextMenuAsset: AssetResponseDto | undefined = $state();
+  let contextMenuPosition: { x: number; y: number } | undefined = $state();
 
   // 60 is the bottom spacer element at 60px
   let bottomSectionHeight = 60;
@@ -470,6 +482,59 @@
     }
   };
 
+  const handleContextMenu = async (asset: AssetResponseDto, event: MouseEvent) => {
+    // console.log('context menu', event);
+
+    // if (contextMenuAsset && contextMenuAsset.id === asset.id) {
+    //   contextMenuAsset = undefined;
+    //   return;
+    // }
+
+    // contextMenuOpen = true;
+    // contextMenuPosition = {
+    //   x: event.clientX,
+    //   y: event.clientY,
+    // };
+    // contextMenuAsset = asset;
+
+    // if (event.shiftKey) {
+    //   contextMenuOpen = false;
+    //   return;
+    // }
+
+    contextMenuAsset = asset;
+    contextMenuOpen = true;
+    contextMenuPosition = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+    event.preventDefault();
+
+    console.log(contextMenuOpen);
+
+    // if (contextMenuIsOpen && contextMenuTargetAsset?.id === asset.id) {
+    //   contextMenuIsOpen = false;
+    //   return;
+    // }
+
+    // contextMenuTargetAsset = asset;
+    // event.preventDefault();
+    // showImageContextMenu({ x: event.clientX, y: event.clientY });
+  };
+
+  // const showImageContextMenu = async (contextMenuDetail: ContextMenuPosition) => {
+  //   await new Promise((resolve) => setTimeout(resolve, 0));
+  //   contextMenuPosition = {
+  //     x: contextMenuDetail.x,
+  //     y: contextMenuDetail.y,
+  //   };
+  //   contextMenuIsOpen = true;
+  // };
+
+  // const closeAlbumContextMenu = () => {
+  //   contextMenuIsOpen = false;
+  // };
+
   const handleSelectAssets = async (asset: AssetResponseDto) => {
     if (!asset) {
       return;
@@ -777,9 +842,12 @@
             {isSelectionMode}
             {singleSelect}
             {bucket}
+            {contextMenuOpen}
+            {contextMenuAsset}
             onSelect={({ title, assets }) => handleGroupSelect(title, assets)}
             onSelectAssetCandidates={handleSelectAssetCandidates}
             onSelectAssets={handleSelectAssets}
+            onContextMenu={handleContextMenu}
           />
         </div>
       {/if}
@@ -808,6 +876,20 @@
     {/await}
   {/if}
 </Portal>
+
+<!-- Context Menu -->
+<RightClickContextMenu
+  title={'test'}
+  {...contextMenuPosition}
+  isOpen={contextMenuOpen}
+  onClose={() => (contextMenuOpen = false)}
+>
+  {#if contextMenuAsset}
+    <DownloadAction asset={contextMenuAsset} menuItem />
+    <ShareAction asset={contextMenuAsset} menuItem />
+  {/if}
+  <MenuOption icon={mdiDeleteOutline} text={$t('delete')} onClick={() => console.log()} />
+</RightClickContextMenu>
 
 <style>
   #asset-grid {

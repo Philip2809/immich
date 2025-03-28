@@ -13,6 +13,8 @@
   import { flip } from 'svelte/animate';
 
   import { uploadAssetsStore } from '$lib/stores/upload';
+  import type { AssetContextMenu } from '$lib/components/shared-components/context-menu/right-click-context-menu.svelte';
+  import { on } from 'svelte/events';
 
   let { isUploading } = uploadAssetsStore;
 
@@ -23,10 +25,12 @@
     showArchiveIcon: boolean;
     bucket: AssetBucket;
     assetInteraction: AssetInteraction;
-
+    contextMenuOpen: boolean;
+    contextMenuAsset: AssetResponseDto | undefined;
     onSelect: ({ title, assets }: { title: string; assets: AssetResponseDto[] }) => void;
     onSelectAssets: (asset: AssetResponseDto) => void;
     onSelectAssetCandidates: (asset: AssetResponseDto | null) => void;
+    onContextMenu: (asset: AssetResponseDto, event: MouseEvent) => void;
   }
 
   let {
@@ -36,9 +40,12 @@
     showArchiveIcon,
     bucket = $bindable(),
     assetInteraction,
+    contextMenuOpen,
+    contextMenuAsset,
     onSelect,
     onSelectAssets,
     onSelectAssetCandidates,
+    onContextMenu,
   }: Props = $props();
 
   let isMouseOverGroup = $state(false);
@@ -150,6 +157,41 @@
         <!-- note: don't remove data-asset-id - its used by web e2e tests -->
         <div
           data-asset-id={asset.id}
+          oncontextmenu={(event) => {
+            // if (open) {
+            //   open = false;
+            //   return;
+            // }
+            // event.preventDefault();
+            // open = true;
+            // onContextMenu(asset, event);
+
+            // if (contextMenuOpen) {
+            //   contextMenuOpen = false;
+            //   return;
+            // }
+            // event.preventDefault();
+            // contextMenuOpen = true;
+            // onContextMenu(asset, event);
+
+            // if (contextMenuOpen) {
+            //   contextMenuOpen = false;
+            //   return;
+            // }
+            // contextMenuAsset = asset;
+            // event.preventDefault();
+            // // contextMenuOpen = true;
+            onContextMenu(asset, event);
+
+            // if (contextMenuIsOpen && contextMenuTargetAsset?.id === asset.id) {
+            //   contextMenuIsOpen = false;
+            //   return;
+            // }
+
+            // contextMenuTargetAsset = asset;
+            // event.preventDefault();
+            // showImageContextMenu({ x: event.clientX, y: event.clientY });
+          }}
           class="absolute"
           style:top={position.top + 'px'}
           style:left={position.left + 'px'}

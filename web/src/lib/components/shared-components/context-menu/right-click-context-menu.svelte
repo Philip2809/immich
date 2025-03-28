@@ -5,7 +5,15 @@
   import { generateId } from '$lib/utils/generate-id';
   import { contextMenuNavigation } from '$lib/actions/context-menu-navigation';
   import { optionClickCallbackStore, selectedIdStore } from '$lib/stores/context-menu.store';
+  import type { AssetResponseDto } from '@immich/sdk';
 
+  export interface AssetContextMenu {
+    asset: AssetResponseDto;
+    position: {
+      x: number;
+      y: number;
+    };
+  }
   interface Props {
     title: string;
     direction?: 'left' | 'right';
@@ -25,36 +33,11 @@
   const id = generateId();
   const menuId = `context-menu-${id}`;
 
-  const reopenContextMenu = async (event: MouseEvent) => {
-    const contextMenuEvent = new MouseEvent('contextmenu', {
-      bubbles: true,
-      cancelable: true,
-      // eslint-disable-next-line unicorn/prefer-global-this
-      view: window,
-      clientX: event.x,
-      clientY: event.y,
-    });
-
-    const elements = document.elementsFromPoint(event.x, event.y);
-
-    if (menuContainer && elements.includes(menuContainer)) {
-      // User right-clicked on the context menu itself, we keep the context
-      // menu as is
-      return;
-    }
-
-    closeContextMenu();
-    await tick();
-    uniqueKey = {};
-
-    // Event will bubble through the DOM tree
-    const sectionIndex = elements.indexOf(event.target as Element);
-    elements.at(sectionIndex + 1)?.dispatchEvent(contextMenuEvent);
-  };
-
   const closeContextMenu = () => {
-    triggerElement?.focus();
-    onClose?.();
+    setTimeout(() => {
+      // triggerElement?.focus();
+      onClose?.();
+    }, 0);
   };
   $effect(() => {
     if (isOpen && menuContainer) {
@@ -63,11 +46,6 @@
       $optionClickCallbackStore = closeContextMenu;
     }
   });
-
-  const oncontextmenu = async (event: MouseEvent) => {
-    event.preventDefault();
-    await reopenContextMenu(event);
-  };
 </script>
 
 {#key uniqueKey}
@@ -91,7 +69,7 @@
         },
       ]}
     >
-      <section class="fixed left-0 top-0 z-10 flex h-screen w-screen" {oncontextmenu} role="presentation">
+      <section class="fixed left-0 top-0 z-10 flex">
         <ContextMenu
           {direction}
           {x}

@@ -4,8 +4,9 @@
   import MenuOption from '$lib/components/shared-components/context-menu/menu-option.svelte';
   import { downloadFile } from '$lib/utils/asset-utils';
   import type { AssetResponseDto } from '@immich/sdk';
-  import { mdiFolderDownloadOutline } from '@mdi/js';
+  import { mdiFileDownloadOutline } from '@mdi/js';
   import { t } from 'svelte-i18n';
+  import { shortcutLabel as computeShortcutLabel } from '$lib/actions/shortcut';
 
   interface Props {
     asset: AssetResponseDto;
@@ -20,7 +21,12 @@
 <svelte:window use:shortcut={{ shortcut: { key: 'd', shift: true }, onShortcut: onDownloadFile }} />
 
 {#if !menuItem}
-  <CircleIconButton color="opaque" icon={mdiFolderDownloadOutline} title={$t('download')} onclick={onDownloadFile} />
+  <CircleIconButton color="opaque" icon={mdiFileDownloadOutline} title={$t('download')} onclick={onDownloadFile} />
 {:else}
-  <MenuOption icon={mdiFolderDownloadOutline} text={$t('download')} onClick={onDownloadFile} />
+  <MenuOption
+    icon={mdiFileDownloadOutline}
+    text={$t('download')}
+    onClick={onDownloadFile}
+    shortcutLabel={computeShortcutLabel({ key: 'd', shift: true })}
+  />
 {/if}
