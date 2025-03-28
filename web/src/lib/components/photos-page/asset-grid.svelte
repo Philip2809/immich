@@ -87,9 +87,8 @@
   let scrubBucket: { bucketDate: string | undefined } | undefined = $state();
   let scrubOverallPercent: number = $state(0);
 
-  let contextMenuOpen = $state(false);
-  let contextMenuAsset: AssetResponseDto | undefined = $state();
-  let contextMenuPosition: { x: number; y: number } | undefined = $state();
+  let contextMenuOnCloseTimer: NodeJS.Timeout | undefined;
+  let contextMenu: AssetContextMenu | undefined = $state();
 
   // 60 is the bottom spacer element at 60px
   let bottomSectionHeight = 60;
@@ -483,57 +482,22 @@
   };
 
   const handleContextMenu = async (asset: AssetResponseDto, event: MouseEvent) => {
-    // console.log('context menu', event);
+    clearTimeout(contextMenuOnCloseTimer);
 
-    // if (contextMenuAsset && contextMenuAsset.id === asset.id) {
-    //   contextMenuAsset = undefined;
-    //   return;
-    // }
-
-    // contextMenuOpen = true;
-    // contextMenuPosition = {
-    //   x: event.clientX,
-    //   y: event.clientY,
-    // };
-    // contextMenuAsset = asset;
-
-    if (contextMenuOpen) {
-      contextMenuOpen = false;
+    if (contextMenu && contextMenu.asset.id === asset.id) {
+      contextMenu = undefined;
       return;
     }
 
-    contextMenuAsset = asset;
-    contextMenuOpen = true;
-    contextMenuPosition = {
-      x: event.clientX,
-      y: event.clientY,
-    };
     event.preventDefault();
-
-    console.log(contextMenuOpen);
-
-    // if (contextMenuIsOpen && contextMenuTargetAsset?.id === asset.id) {
-    //   contextMenuIsOpen = false;
-    //   return;
-    // }
-
-    // contextMenuTargetAsset = asset;
-    // event.preventDefault();
-    // showImageContextMenu({ x: event.clientX, y: event.clientY });
+    contextMenu = {
+      asset,
+      position: {
+        x: event.clientX,
+        y: event.clientY,
+      },
+    };
   };
-
-  // const showImageContextMenu = async (contextMenuDetail: ContextMenuPosition) => {
-  //   await new Promise((resolve) => setTimeout(resolve, 0));
-  //   contextMenuPosition = {
-  //     x: contextMenuDetail.x,
-  //     y: contextMenuDetail.y,
-  //   };
-  //   contextMenuIsOpen = true;
-  // };
-
-  // const closeAlbumContextMenu = () => {
-  //   contextMenuIsOpen = false;
-  // };
 
   const handleSelectAssets = async (asset: AssetResponseDto) => {
     if (!asset) {
@@ -842,8 +806,6 @@
             {isSelectionMode}
             {singleSelect}
             {bucket}
-            {contextMenuOpen}
-            {contextMenuAsset}
             onSelect={({ title, assets }) => handleGroupSelect(title, assets)}
             onSelectAssetCandidates={handleSelectAssetCandidates}
             onSelectAssets={handleSelectAssets}
@@ -879,14 +841,18 @@
 
 <!-- Context Menu -->
 <RightClickContextMenu
-  title={'test'}
-  {...contextMenuPosition}
-  isOpen={contextMenuOpen}
-  onClose={() => (contextMenuOpen = false)}
+  title={'Image Actions'}
+  {...contextMenu?.position}
+  isOpen={!!contextMenu}
+  onClose={() => {
+    contextMenuOnCloseTimer = setTimeout(() => {
+      contextMenu = undefined;
+    }, 5);
+  }}
 >
-  {#if contextMenuAsset}
-    <DownloadAction asset={contextMenuAsset} menuItem />
-    <ShareAction asset={contextMenuAsset} menuItem />
+  {#if contextMenu?.asset}
+    <DownloadAction asset={contextMenu.asset} menuItem />
+    <ShareAction asset={contextMenu.asset} menuItem />
   {/if}
   <MenuOption icon={mdiDeleteOutline} text={$t('delete')} onClick={() => console.log()} />
 </RightClickContextMenu>

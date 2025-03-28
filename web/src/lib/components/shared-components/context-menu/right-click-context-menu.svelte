@@ -34,10 +34,7 @@
   const menuId = `context-menu-${id}`;
 
   const closeContextMenu = () => {
-    setTimeout(() => {
-      // triggerElement?.focus();
-      onClose?.();
-    }, 0);
+    onClose?.();
   };
   $effect(() => {
     if (isOpen && menuContainer) {

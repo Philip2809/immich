@@ -13,8 +13,6 @@
   import { flip } from 'svelte/animate';
 
   import { uploadAssetsStore } from '$lib/stores/upload';
-  import type { AssetContextMenu } from '$lib/components/shared-components/context-menu/right-click-context-menu.svelte';
-  import { on } from 'svelte/events';
 
   let { isUploading } = uploadAssetsStore;
 
@@ -25,8 +23,6 @@
     showArchiveIcon: boolean;
     bucket: AssetBucket;
     assetInteraction: AssetInteraction;
-    contextMenuOpen: boolean;
-    contextMenuAsset: AssetResponseDto | undefined;
     onSelect: ({ title, assets }: { title: string; assets: AssetResponseDto[] }) => void;
     onSelectAssets: (asset: AssetResponseDto) => void;
     onSelectAssetCandidates: (asset: AssetResponseDto | null) => void;
@@ -40,8 +36,6 @@
     showArchiveIcon,
     bucket = $bindable(),
     assetInteraction,
-    contextMenuOpen,
-    contextMenuAsset,
     onSelect,
     onSelectAssets,
     onSelectAssetCandidates,
