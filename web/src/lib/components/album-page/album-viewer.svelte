@@ -7,7 +7,7 @@
   import { AssetStore } from '$lib/stores/assets-store.svelte';
   import { cancelMultiselect, downloadAlbum } from '$lib/utils/asset-utils';
   import CircleIconButton from '../elements/buttons/circle-icon-button.svelte';
-  import DownloadAction from '../photos-page/actions/download-action.svelte';
+  import DownloadAction from '$lib/components/asset-viewer/actions/download-action.svelte';
   import AssetGrid from '../photos-page/asset-grid.svelte';
   import AssetSelectControlBar from '../photos-page/asset-select-control-bar.svelte';
   import ControlAppBar from '../shared-components/control-app-bar.svelte';

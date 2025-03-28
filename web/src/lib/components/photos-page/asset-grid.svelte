@@ -843,7 +843,7 @@
 <RightClickContextMenu
   title={'Image Actions'}
   {...contextMenu?.position}
-  isOpen={!!contextMenu}
+  isOpen={!!contextMenu?.asset}
   onClose={() => {
     contextMenuOnCloseTimer = setTimeout(() => {
       contextMenu = undefined;
@@ -851,7 +851,7 @@
   }}
 >
   {#if contextMenu?.asset}
-    <DownloadAction asset={contextMenu.asset} menuItem />
+    <DownloadAction useContext={false} asset={contextMenu.asset} menuItem />
     <ShareAction asset={contextMenu.asset} menuItem />
   {/if}
   <MenuOption icon={mdiDeleteOutline} text={$t('delete')} onClick={() => console.log()} />

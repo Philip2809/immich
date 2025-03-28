@@ -130,7 +130,7 @@
     {/if}
 
     {#if !isOwner && showDownloadButton}
-      <DownloadAction {asset} />
+      <DownloadAction useContext={false} {asset} />
     {/if}
 
     {#if showDetailButton}
@@ -158,7 +158,7 @@
           <MenuOption icon={mdiPresentationPlay} text={$t('slideshow')} onClick={onPlaySlideshow} />
         {/if}
         {#if showDownloadButton}
-          <DownloadAction {asset} menuItem />
+          <DownloadAction useContext={false} {asset} menuItem />
         {/if}
         {#if asset.isTrashed}
           <RestoreAction {asset} {onAction} />

@@ -9,7 +9,7 @@
   import { addSharedLinkAssets, type SharedLinkResponseDto } from '@immich/sdk';
   import { mdiArrowLeft, mdiFileImagePlusOutline, mdiFolderDownloadOutline, mdiSelectAll } from '@mdi/js';
   import CircleIconButton from '../elements/buttons/circle-icon-button.svelte';
-  import DownloadAction from '../photos-page/actions/download-action.svelte';
+  import DownloadAction from '$lib/components/asset-viewer/actions/download-action.svelte';
   import RemoveFromSharedLink from '../photos-page/actions/remove-from-shared-link.svelte';
   import AssetSelectControlBar from '../photos-page/asset-select-control-bar.svelte';
   import ControlAppBar from '../shared-components/control-app-bar.svelte';
